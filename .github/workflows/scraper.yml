@@ -1,0 +1,29 @@
+name: Scraper Bonial Automatise
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # S'exécute automatiquement tous les jours à 8h00
+  workflow_dispatch: # Permet de le lancer à la main quand on veut
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v3
+
+      - name: Installer Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Installer les dépendances
+        run: |
+          pip install requests beautifulsoup4 supabase
+
+      - name: Exécuter le scraper
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python scraper.py
